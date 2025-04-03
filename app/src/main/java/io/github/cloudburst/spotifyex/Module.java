@@ -1,18 +1,17 @@
 package io.github.cloudburst.spotifyex;
 
-import static io.github.cloudburst.spotifyex.patches.FlagsKt.*;
-import static io.github.cloudburst.spotifyex.patches.HttpKt.*;
-import static io.github.cloudburst.spotifyex.patches.ProductKt.*;
-import static io.github.cloudburst.spotifyex.patches.UrlsKt.*;
-
 import android.text.format.DateFormat;
 import android.util.Log;
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import org.luckypray.dexkit.DexKitBridge;
 
 import java.util.Date;
 
-import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import static io.github.cloudburst.spotifyex.patches.AccountKt.patchAccount;
+import static io.github.cloudburst.spotifyex.patches.ContextMenuKt.patchContextMenu;
+import static io.github.cloudburst.spotifyex.patches.HttpKt.blockRequests;
+import static io.github.cloudburst.spotifyex.patches.UrlsKt.cleanTrackingUrls;
 
 
 public final class Module implements IXposedHookLoadPackage {
@@ -31,10 +30,12 @@ public final class Module implements IXposedHookLoadPackage {
                 Log.e(TAG, "Failed to create DexKitBridge");
                 return;
             }
-            patchFlags(cl);
-            blockRequests(cl);
-            patchProduct(cl);
-            cleanTrackingUrls();
+            //try { patchFlags(cl); } catch (Exception e) { Log.e(TAG, "Failed to patch flags", e); }
+            try { blockRequests(cl); } catch (Exception e) { Log.e(TAG, "Failed to block requests", e); }
+            //try { patchProduct(cl); } catch (Exception e) { Log.e(TAG, "Failed to patch product", e); }
+            try { patchAccount(bridge, cl); } catch (Exception e) { Log.e(TAG, "Failed to patch account", e); }
+            try { patchContextMenu(bridge, cl); } catch (Exception e) { Log.e(TAG, "Failed to patch context menu", e); }
+            try { cleanTrackingUrls(); } catch (Exception e) { Log.e(TAG, "Failed to clean tracking URLs", e); }
         } catch (Exception e) {
             Log.e(TAG, "Failed to find method", e);
         }

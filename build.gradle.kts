@@ -2,6 +2,8 @@
 buildscript {
     repositories {
         google()
+        maven("https://jitpack.io")
+        maven("https://api.xposed.info")
         //noinspection JcenterRepositoryObsolete
         jcenter()
     }
@@ -14,6 +16,8 @@ buildscript {
 allprojects {
     repositories {
         google()
+        maven("https://jitpack.io")
+        maven("https://api.xposed.info")
         //noinspection JcenterRepositoryObsolete
         jcenter()
     }
